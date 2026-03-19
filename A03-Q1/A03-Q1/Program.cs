@@ -12,12 +12,13 @@ namespace A03_Q1
     {
 
         //Moving the initialization off the random class up here to save time
-        //private Random rand = new Random();
+        private Random rand = new Random();
 
         static void Main(string[] args)
         {
 
             BenchmarkRunner.Run<Program>();
+          
         }
 
 
@@ -26,6 +27,7 @@ namespace A03_Q1
         {
             
             int temp = 0;
+            Random rand = new Random();
             int LOOPCOUNT = 10000;
             for (int counter = 0; counter < LOOPCOUNT; counter++)
             {
@@ -33,23 +35,37 @@ namespace A03_Q1
                 if (randomFloat < .10)
                 {
                     temp = 1;
+                    
                 }
                 if (randomFloat >= .10 && randomFloat < .30)
                 {
                     temp = 2;
+                    
                 }
                 if (randomFloat >= .3)
                 {
                     temp = 3;
+
                 }
             }
+            GC.KeepAlive(temp);
+            
         }
 
         [Benchmark]
         public void BetterCode()
         {
-            // Rewrite the code from initial code here, with
-            // optimizations for time.
+            int temp = 0;
+            int LOOPCOUNT = 10000;
+            for (int counter = 0; counter < LOOPCOUNT; counter++)
+            {
+                float randomFloat = rand.NextSingle();
+                temp = randomFloat < .10f ? 1 : randomFloat < .30f ? 2 : 3;
+
+
+            }
+            GC.KeepAlive(temp);
+           
         }
     }
 }
