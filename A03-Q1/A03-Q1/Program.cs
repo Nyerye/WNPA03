@@ -8,10 +8,14 @@ namespace A03_Q1
 {
     public class Program
     {
+        //Store results here for summary
+        public static long initialTicks;
+        public static long betterTicks;
+
         static void Main(string[] args)
         {
-            long initialTicks = InitialCode();
-            long betterTicks = BetterCode();
+            InitialCode();
+            BetterCode();
 
             Console.WriteLine("Summary of execution times:");
             Console.WriteLine($"InitialCode: {initialTicks} ticks");
@@ -31,7 +35,7 @@ namespace A03_Q1
             }
         }
 
-        public static long InitialCode()
+        public static void InitialCode()
         {
             int temp = 0;
             Random rand = new Random();
@@ -63,41 +67,31 @@ namespace A03_Q1
             sw.Stop();
             GC.KeepAlive(temp);
 
-            return sw.ElapsedTicks;
+            initialTicks = sw.ElapsedTicks;
         }
 
-        public static long BetterCode()
+        public static void BetterCode()
         {
             int temp = 0;
-            float randomFloat;
             Random rand = new Random();
-            int LOOPCOUNT = 10000;
+            const int LOOPCOUNT = 10000;
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
             for (int counter = 0; counter < LOOPCOUNT; counter++)
             {
-                randomFloat = rand.NextSingle();
+                //Have a ceiling of 10 (100%)
+                int randomInt = rand.Next(10);
 
-                if (randomFloat < .10f)
-                {
-                    temp = 1;
-                }
-                else if (randomFloat < .30f)
-                {
-                    temp = 2;
-                }
-                else
-                {
-                    temp = 3;
-                }
+                //Use a ternary statement to keep instructions to one line instead of multiple.
+                temp = randomInt < 1 ? 1 : randomInt < 3 ? 2 : 3;
             }
 
             sw.Stop();
             GC.KeepAlive(temp);
 
-            return sw.ElapsedTicks;
+            betterTicks = sw.ElapsedTicks;
         }
     }
 }
