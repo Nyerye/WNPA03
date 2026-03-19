@@ -12,11 +12,45 @@ namespace A03_Q1
         public static long initialTicks;
         public static long betterTicks;
 
+        public const int LOOPCOUNT = 10000;
+        public const int RUNS = 1000; //repeat to reduce noise
+
         static void Main(string[] args)
         {
+            //Warmup the Just in Time Engine so that way the methods are already compiled when I want to really call them. 
+            //I do not want to count the time it takes to compile them as that is noise.
             InitialCode();
             BetterCode();
 
+            //Force garbage collection before the real run so we go back to a clean slate
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            //Measure InitialCode
+            Stopwatch sw = Stopwatch.StartNew();
+            for (int i = 0; i < RUNS; i++)
+            {
+                InitialCode();
+            }
+            sw.Stop();
+            initialTicks = sw.ElapsedTicks;
+
+            //Force GC again before next test
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            //Measure BetterCode
+            sw.Restart();
+            for (int i = 0; i < RUNS; i++)
+            {
+                BetterCode();
+            }
+            sw.Stop();
+            betterTicks = sw.ElapsedTicks;
+
+            //Display the results out to the user. This is about as true as it gets.
             Console.WriteLine("Summary of execution times:");
             Console.WriteLine($"InitialCode: {initialTicks} ticks");
             Console.WriteLine($"BetterCode:  {betterTicks} ticks");
@@ -34,7 +68,10 @@ namespace A03_Q1
                 Console.WriteLine("Both methods took the same time.");
             }
         }
-
+        /// <summary>
+        /// Method that holds the original code that Norbert provided
+        /// The only modifications I made to it is to insert a stopwatch to measure the time the for loop takes to complete.
+        /// </summary>
         public static void InitialCode()
         {
             int temp = 0;
@@ -65,11 +102,15 @@ namespace A03_Q1
             }
 
             sw.Stop();
-            GC.KeepAlive(temp);
-
             initialTicks = sw.ElapsedTicks;
         }
 
+        /// <summary>
+        /// My more superior coding method than what Norbert gave me.
+        /// Changed it to use ints instead of floats that look for the same thing, just with whole numbers.
+        /// Added const to the LOPPCOUNT as it is a constant and should be addressed as such.
+        /// Changed the if block to a ternary statement so its less branching.
+        /// </summary>
         public static void BetterCode()
         {
             int temp = 0;
@@ -87,10 +128,7 @@ namespace A03_Q1
                 //Use a ternary statement to keep instructions to one line instead of multiple.
                 temp = randomInt < 1 ? 1 : randomInt < 3 ? 2 : 3;
             }
-
             sw.Stop();
-            GC.KeepAlive(temp);
-
             betterTicks = sw.ElapsedTicks;
         }
     }
