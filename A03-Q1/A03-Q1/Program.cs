@@ -2,24 +2,25 @@
 // Place your file header comments here
 //
 using System.Diagnostics;
+using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
 
 namespace A03_Q1
 {
-    internal class Program
+    [MemoryDiagnoser]
+    public class Program
     {
         static void Main(string[] args)
         {
-            InitialCode();
-            BetterCode();
 
-            Console.WriteLine("Press any key to end...");
-            Console.ReadKey();
+            BenchmarkRunner.Run<Program>();
         }
 
-        static void InitialCode()
+
+        [Benchmark]
+        public void InitialCode()
         {
-            // You may add code in this method for purposes of 
-            // measuring performance.
+            
             int temp = 0;
             Random rand = new Random();
             int LOOPCOUNT = 10000;
@@ -41,7 +42,8 @@ namespace A03_Q1
             }
         }
 
-        static void BetterCode()
+        [Benchmark]
+        public void BetterCode()
         {
             // Rewrite the code from initial code here, with
             // optimizations for time.
