@@ -10,6 +10,10 @@ namespace A03_Q1
     [MemoryDiagnoser]
     public class Program
     {
+
+        //Moving the initialization off the random class up here to save time
+        //private Random rand = new Random();
+
         static void Main(string[] args)
         {
 
@@ -22,7 +26,6 @@ namespace A03_Q1
         {
             
             int temp = 0;
-            Random rand = new Random();
             int LOOPCOUNT = 10000;
             for (int counter = 0; counter < LOOPCOUNT; counter++)
             {
