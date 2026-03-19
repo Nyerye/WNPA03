@@ -1,75 +1,103 @@
-﻿// 
+﻿//
 // Place your file header comments here
 //
+using System;
 using System.Diagnostics;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
 
 namespace A03_Q1
 {
-    [MemoryDiagnoser]
     public class Program
     {
-
-        //Moving the initialization off the random class up here to save time
-        private Random rand;
-
         static void Main(string[] args)
         {
+            long initialTicks = InitialCode();
+            long betterTicks = BetterCode();
 
-            BenchmarkRunner.Run<Program>();
+            Console.WriteLine("Summary of execution times:");
+            Console.WriteLine($"InitialCode: {initialTicks} ticks");
+            Console.WriteLine($"BetterCode:  {betterTicks} ticks");
 
+            if (betterTicks < initialTicks)
+            {
+                Console.WriteLine("BetterCode was faster.");
+            }
+            else if (betterTicks > initialTicks)
+            {
+                Console.WriteLine("InitialCode was faster.");
+            }
+            else
+            {
+                Console.WriteLine("Both methods took the same time.");
+            }
         }
 
-        //Setting up the random object once so BetterCode can reuse it
-        [GlobalSetup]
-        public void Setup()
+        public static long InitialCode()
         {
-            rand = new Random();
-        }
-
-        [Benchmark]
-        public void InitialCode()
-        {
-
             int temp = 0;
             Random rand = new Random();
             int LOOPCOUNT = 10000;
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             for (int counter = 0; counter < LOOPCOUNT; counter++)
             {
                 float randomFloat = rand.NextSingle();
-                if (randomFloat < .10)
+
+                if (randomFloat < .10f)
                 {
                     temp = 1;
-
                 }
-                if (randomFloat >= .10 && randomFloat < .30)
+
+                if (randomFloat >= .10f && randomFloat < .30f)
                 {
                     temp = 2;
-
                 }
-                if (randomFloat >= .3)
+
+                if (randomFloat >= .30f)
                 {
                     temp = 3;
-
                 }
             }
+
+            sw.Stop();
             GC.KeepAlive(temp);
 
+            return sw.ElapsedTicks;
         }
 
-        [Benchmark]
-        public void BetterCode()
+        public static long BetterCode()
         {
             int temp = 0;
+            float randomFloat;
+            Random rand = new Random();
             int LOOPCOUNT = 10000;
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             for (int counter = 0; counter < LOOPCOUNT; counter++)
             {
-                float randomFloat = rand.NextSingle();
-                temp = randomFloat < .10f ? 1 : randomFloat < .30f ? 2 : 3;
+                randomFloat = rand.NextSingle();
+
+                if (randomFloat < .10f)
+                {
+                    temp = 1;
+                }
+                else if (randomFloat < .30f)
+                {
+                    temp = 2;
+                }
+                else
+                {
+                    temp = 3;
+                }
             }
+
+            sw.Stop();
             GC.KeepAlive(temp);
 
+            return sw.ElapsedTicks;
         }
     }
 }
